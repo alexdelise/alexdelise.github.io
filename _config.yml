@@ -27,7 +27,7 @@ author:
   avatar           : "profile.jpg"
   name             : "Alex DeLise"
   pronouns         : # example: "she/her"  
-  bio              : "applied math and scientific computing at fsu | prev ml @ emory, quantum computing @ ut knoxville"
+  bio              : "applied math & scientific computing @ fsu | prev ml @ emory, quantum computing @ ut knoxville"
   location         : "Tallahassee, FL"
   employer         : "Florida State University"
   uri              : # URL
@@ -64,7 +64,7 @@ author:
   keybase          : # Username
   instagram        : # Username
   lastfm           : # Username
-  linkedin         : # alexanderdelise
+  linkedin         : alexanderdelise
   mastodon         : # URL
   medium           : # URL
   pinterest        : # Username
@@ -72,7 +72,7 @@ author:
   steam            : # Username
   telegram         : # URL
   tumblr           : # Username
-  twitter          : # alexrdelise for X / Twitter
+  twitter          : alexrdelise
   vine             : # Username
   weibo            : # Username
   wikipedia        : # Username
