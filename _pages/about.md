@@ -16,7 +16,7 @@ In my previous summers, I have done two NSF Research Experience for Undergraduat
 Feel free to connect with me via email or my socials! To see a list of my publications, talks, and presentations, click below to view my full CV.
 
 <div style="text-align: center; margin-top: 25px;">
-  <a href="{{ base_path }}/files/cvAlexanderDeLise.pdf" target="_blank"
+  <a href="{{ base_path }}/files/main.pdf" target="_blank"
      style="font-size: 1.4em; font-weight: 600; text-decoration: none; color: #5A7B41;">
     CV
   </a>
