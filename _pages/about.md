@@ -7,7 +7,7 @@ redirect_from:
   - /about.html
 ---
 
-Hi there! My name is Alex and I am a senior at Florida State University pursuing two degrees in Applied and Computational Mathematics and Computational Science. I am passionate about developing our mathematical understanding of generative AI and deep learning, and applying these methods to solving inverse problems.
+Hi there! My name is Alex and I am a senior at Florida State University pursuing two degrees in Applied and Computational Mathematics and Computational Science. I am passionate about advancing the mathematical foundations of generative AI and deep learning, and about applying these methods to inverse problems.
 
 In Spring 2026 I will begin my honors thesis in generative compressed sensing under my advisor [Nick Dexter](https://www.sc.fsu.edu/people?uid=nd22f) in the Department of Scientific Computing. During Summer 2027, I will be a data science intern at the [Johns Hopkins Applied Physics Laboratory](https://www.jhuapl.edu/).
 
@@ -20,9 +20,3 @@ Feel free to connect with me via email or my socials! To see a list of my public
     CV
   </a>
 </div>
-
-## News
-
-{% include news-list.html limit=5 compact=true %}
-
-<p class="news-more-link"><a href="{{ base_path }}/news/">See all news</a></p>
