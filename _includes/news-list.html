@@ -1,0 +1,40 @@
+{% assign news_items = site.data.news | sort: "date" | reverse %}
+{% assign news_limit = include.limit | default: news_items.size %}
+
+<ul class="news-list{% if include.compact %} news-list--compact{% else %} news-list--full{% endif %}">
+  {% for item in news_items limit: news_limit %}
+    <li class="news-item{% if item.image %} news-item--with-image{% endif %}">
+      {% if item.image %}
+        {% if item.url %}
+          <a class="news-item__thumb" href="{{ item.url }}" target="_blank" rel="noopener">
+            <img src="{{ item.image }}" alt="{{ item.image_alt | default: item.title }}" class="news-item__image">
+          </a>
+        {% else %}
+          <span class="news-item__thumb">
+            <img src="{{ item.image }}" alt="{{ item.image_alt | default: item.title }}" class="news-item__image">
+          </span>
+        {% endif %}
+      {% endif %}
+
+      <div class="news-item__body">
+        <div class="news-item__meta">
+          {% if item.display_date %}{{ item.display_date }}{% else %}{{ item.date | date: "%B %-d, %Y" }}{% endif %}
+        </div>
+
+        {% if item.url %}
+          <a class="news-item__title" href="{{ item.url }}" target="_blank" rel="noopener">{{ item.title }}</a>
+        {% else %}
+          <span class="news-item__title">{{ item.title }}</span>
+        {% endif %}
+
+        {% if item.text %}
+          <div class="news-item__text">{{ item.text | markdownify | remove: "<p>" | remove: "</p>" }}</div>
+        {% endif %}
+
+        {% if item.source %}
+          <div class="news-item__source">{{ item.source }}</div>
+        {% endif %}
+      </div>
+    </li>
+  {% endfor %}
+</ul>
