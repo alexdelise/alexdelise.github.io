@@ -45,9 +45,27 @@ layout: default
       {% endunless %}
 
       <section class="page__content" itemprop="text">
+        {% if page.collection == 'publications' %}
+          {% assign publication_image = page.image | default: page.header.teaser %}
+          {% if publication_image %}
+            <div class="publication-page-image-wrap">
+              <img
+                class="publication-page-image"
+                src="{% if publication_image contains '://' %}{{ publication_image }}{% elsif publication_image contains '/' %}{{ publication_image | prepend: base_path }}{% else %}{{ publication_image | prepend: '/images/' | prepend: base_path }}{% endif %}"
+                alt="{{ page.image_alt | default: page.title }}">
+            </div>
+          {% endif %}
+
+          {% include publication-links.html item=page %}
+        {% endif %}
+
         {{ content }}
 
-        {% if page.citation and page.paperurl and page.slidesurl and page.bibtexurl %}
+        {% if page.collection == 'publications' %}
+          {% if page.citation %}
+            <p style="font-size: smaller">Recommended citation: {{ page.citation }}</p>
+          {% endif %}
+        {% elsif page.citation and page.paperurl and page.slidesurl and page.bibtexurl %}
           <p style="font-size: smaller">Recommended citation: {{ page.citation }}<br /><a href="{{ page.paperurl }}">Download Paper</a> | <a href="{{ page.slidesurl }}">Download Slides</a> | <a href="{{ page.bibtexurl }}">Download Bibtex</a></p>
         {% elsif page.citation and page.paperurl and page.slidesurl %}
           <p style="font-size: smaller">Recommended citation: {{ page.citation }}<br /><a href="{{ page.paperurl }}">Download Paper</a> | <a href="{{ page.slidesurl }}">Download Slides</a></p>

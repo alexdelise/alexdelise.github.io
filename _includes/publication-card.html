@@ -1,0 +1,38 @@
+{% include base_path %}
+{% assign publication = include.publication %}
+{% assign publication_title = publication.title | markdownify | remove: "<p>" | remove: "</p>" %}
+{% assign publication_url = publication.url | prepend: base_path %}
+{% assign publication_image = publication.image | default: publication.header.teaser %}
+
+<article class="publication-card">
+  <a class="publication-card__media" href="{{ publication_url }}" rel="permalink" aria-label="{{ publication.title }}">
+    {% if publication_image %}
+      <img
+        class="publication-card__image"
+        src="{% if publication_image contains '://' %}{{ publication_image }}{% elsif publication_image contains '/' %}{{ publication_image | prepend: base_path }}{% else %}{{ publication_image | prepend: '/images/' | prepend: base_path }}{% endif %}"
+        alt="{{ publication.image_alt | default: publication.title }}">
+    {% else %}
+      <span class="publication-card__placeholder" aria-hidden="true">{{ publication.date | date: "%Y" }}</span>
+    {% endif %}
+  </a>
+
+  <div class="publication-card__body">
+    <h2 class="publication-card__title">
+      <a href="{{ publication_url }}" rel="permalink">{{ publication_title }}</a>
+    </h2>
+
+    {% if publication.authors %}
+      <p class="publication-card__authors">{{ publication.authors }}</p>
+    {% endif %}
+
+    <p class="publication-card__venue">
+      {% if publication.status %}{{ publication.status }}{% if publication.venue %}, {% endif %}{% endif %}{% if publication.venue %}<i>{{ publication.venue }}</i>{% endif %}{% if publication.date %}, {{ publication.date | date: "%Y" }}{% endif %}
+    </p>
+
+    {% if publication.excerpt %}
+      <p class="publication-card__excerpt">{{ publication.excerpt | markdownify | remove: "<p>" | remove: "</p>" }}</p>
+    {% endif %}
+
+    {% include publication-links.html item=publication %}
+  </div>
+</article>

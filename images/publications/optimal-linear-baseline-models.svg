@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 792 496" role="img" aria-labelledby="title desc">
+  <title id="title">Optimal linear baseline model encoder-decoder diagram</title>
+  <desc id="desc">A diagram with input x, encoder E, latent variable z, decoder D comma b, output y, and a brace labeled A dot plus b.</desc>
+  <rect width="792" height="496" fill="#ffffff"/>
+
+  <rect x="34" y="24" width="80" height="350" fill="#c9d8ad"/>
+  <polygon points="134,24 334,149 334,259 134,374" fill="#afd6d1"/>
+  <rect x="354" y="149" width="80" height="110" fill="#e9d4a3"/>
+  <polygon points="454,149 654,82 654,336 454,259" fill="#e5bfd3"/>
+  <rect x="674" y="82" width="78" height="254" fill="#b4d9bd"/>
+
+  <g fill="#000000" font-family="Georgia, Times, serif" text-anchor="middle">
+    <text x="74" y="208" font-size="42" font-weight="700">x</text>
+    <text x="232" y="199" font-size="45">encoder</text>
+    <text x="232" y="240" font-size="45" font-weight="700">E</text>
+    <text x="394" y="215" font-size="42" font-weight="700">z</text>
+    <text x="554" y="199" font-size="45">decoder</text>
+    <text x="554" y="238" font-size="45" font-weight="700">D, b</text>
+    <text x="713" y="209" font-size="44" font-weight="700">y</text>
+  </g>
+
+  <path d="M156 418
+           C156 430 168 430 180 430
+           L374 430
+           C386 430 392 435 396 444
+           C400 435 406 430 418 430
+           L608 430
+           C620 430 632 430 632 418"
+        fill="none" stroke="#000000" stroke-width="5" stroke-linecap="round"/>
+
+  <text x="396" y="474" fill="#000000" font-family="Georgia, Times, serif" font-size="38" font-weight="700" text-anchor="middle">A(&#183;)+b</text>
+</svg>

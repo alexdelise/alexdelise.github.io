@@ -1,8 +1,17 @@
-- date: 2026-03-01
+- date: 2026-03-27
   display_date: "March 2026"
   title: "Named a 2026 Goldwater Scholar"
   text: "I earned the Barry Goldwater Scholarship, a national award recognizing undergraduate researchers in STEM."
   url: "https://news.fsu.edu/news/students-campus-life/2026/04/13/fsu-achieves-historic-milestone-four-students-named-2026-goldwater-scholars/"
   source: "Florida State University News"
+  image:
+  image_alt:
+
+- date: 2026-04-10
+  display_date: "April 2026"
+  title: "Manuscript Accepted to Foundations of Data Science"
+  text: "Our manuscript, *Optimal Linear Baseline Models for Scientific Machine Learning*, was accepted for publication to Foundations of Data Science."
+  url:
+  source: "Foundations of Data Science"
   image:
   image_alt:
