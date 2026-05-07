@@ -1,0 +1,71 @@
+/* ==========================================================================
+   EVERFOREST DARK THEME
+   ========================================================================== */
+
+/* Color codes used for the theme */
+$everforest-fg              : #d3c6aa;
+$everforest-red             : #e67e80;
+$everforest-orange          : #e69875;
+$everforest-yellow          : #dbbc7f;
+$everforest-green           : #a7c080;
+$everforest-blue            : #7fbbb3;
+$everforest-aqua            : #83c092;
+$everforest-bg-dim          : #232a2e;
+$everforest-bg0             : #2d353b;
+$everforest-bg1             : #343f44;
+$everforest-bg2             : #3d484d;
+$everforest-bg3             : #475258;
+$everforest-bg5             : #56635f;
+$everforest-grey0           : #7a8478;
+$everforest-grey1           : #859289;
+$everforest-grey2           : #9da9a0;
+
+$primary-color              : $everforest-green;
+$base-color                 : mix(#000, $everforest-green, 52%);
+$background                 : $everforest-bg0;
+$background-light           : $everforest-bg1;
+$background-lighter         : $everforest-bg2;
+$surface                    : $everforest-bg1;
+$text                       : $everforest-fg;
+$link                       : $everforest-green;
+$link-dark                  : $everforest-aqua;
+$link-light                 : mix(#fff, $everforest-green, 14%);
+$footer                     : $everforest-bg-dim;
+
+/* Color codes used for the site */
+$danger-color               : $everforest-red;
+$info-color                 : $everforest-blue;
+$notice-color               : $everforest-grey1;
+$success-color              : $everforest-aqua;
+$warning-color              : $everforest-orange;
+
+/* Other basic settings for the template */
+$border-radius              : 4px;
+$box-shadow                 : 0 1px 1px rgba(30, 35, 38, 0.32);
+$global-transition          : all 0.2s ease-in-out;
+$masthead-height            : 70px;
+$navicon-width              : 28px;
+$navicon-height             : 4px;
+$sidebar-link-max-width     : 250px;
+$sidebar-screen-min-width   : 1024px;
+
+/* Dark theme for the site */
+html[data-theme="dark"] {
+    --global-base-color                 : #{$base-color};
+    --global-bg-color                   : #{$background};
+    --global-surface-color              : #{$surface};
+    --global-footer-bg-color            : #{$footer};
+    --global-border-color               : #{$everforest-bg5};
+    --global-dark-border-color          : #{$everforest-bg2};
+    --global-code-background-color      : #{$everforest-bg1};
+    --global-code-text-color            : #{$everforest-fg};
+    --global-fig-caption-color          : #{$everforest-grey2};
+    --global-link-color                 : #{$link};
+    --global-link-color-hover           : #{$link-dark};
+    --global-link-color-visited         : #{$link-light};
+    --global-masthead-link-color        : #{$everforest-fg};
+    --global-masthead-link-color-hover  : #{$link};
+    --global-text-color                 : #{$text};
+    --global-text-color-light           : #{$everforest-grey2};
+    --global-thead-color                : #{$everforest-bg2};
+}

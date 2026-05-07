@@ -8,7 +8,7 @@
 
 # Basic Site Settings
 locale                   : "en-US"
-site_theme               : "air" # Currently available options are "default", "air"
+site_theme               : "everforest" # Currently available options are "default", "air", "everforest"
 title                    : "Alex DeLise"
 title_separator          : "-"
 name                     : &name "Alex DeLise"
