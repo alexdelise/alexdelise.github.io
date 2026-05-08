@@ -265,12 +265,13 @@
   border-bottom: 1px solid var(--global-border-color);
 
   @include breakpoint($small) {
-    grid-template-columns: 150px minmax(0, 1fr);
+    grid-template-columns: 185px minmax(0, 1fr);
   }
 }
 
 .publication-card__media {
   display: block;
+  align-self: start;
   overflow: hidden;
   border: 1px solid var(--global-border-color);
   border-radius: $border-radius;
