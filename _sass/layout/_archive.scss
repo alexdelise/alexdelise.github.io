@@ -290,7 +290,7 @@
 }
 
 .publication-card__image {
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .publication-card__placeholder {
@@ -358,18 +358,4 @@
     border-color: var(--global-link-color-hover);
     text-decoration: none !important;
   }
-}
-
-.publication-page-image-wrap {
-  max-width: 520px;
-  margin: 0 0 1.25em;
-  overflow: hidden;
-  border: 1px solid var(--global-border-color);
-  border-radius: $border-radius;
-  background: var(--global-surface-color);
-}
-
-.publication-page-image {
-  display: block;
-  width: 100%;
 }

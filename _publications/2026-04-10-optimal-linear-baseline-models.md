@@ -9,11 +9,11 @@ venue: "Foundations of Data Science"
 status: "Accepted"
 image: "/images/publications/optimal-linear-baseline-models.svg"
 image_alt: "Encoder-decoder diagram for optimal linear baseline models"
-paperurl:
+paperurl: "https://www.aimsciences.org/article/doi/10.3934/fods.2026012"
 arxivurl: "https://arxiv.org/abs/2508.05831"
 openreviewurl:
 htmlurl:
-codeurl:
+codeurl: "https://github.com/alexdelise/CMDS-REU-MADDI"
 demourl:
 posterurl:
 slidesurl:
@@ -21,6 +21,6 @@ bibtexurl:
 citation:
 ---
 
-This project develops optimal linear baseline models for benchmarking scientific machine learning architectures. The goal is to provide principled rank-constrained encoder-decoder maps that make it easier to understand when more expressive learned models are providing real value.
+## Abstract
 
-The preprint is available on arXiv. Links to the journal version and any related project materials will be added here as they become available.
+Across scientific domains, a fundamental challenge is to characterize and compute the mappings from underlying physical processes to observed signals and measurements. While nonlinear neural networks have achieved considerable success, they remain theoretically opaque, which hinders adoption in contexts where interpretability is paramount. In contrast, linear neural networks serve as a simple yet effective foundation for gaining insight into these complex relationships. In this work, we develop a unified theoretical framework for analyzing linear encoder-decoder architectures through the lens of Bayes risk minimization for solving data-driven scientific machine learning problems. We derive closed-form, rank-constrained linear and affine linear optimal mappings for forward modeling and inverse recovery tasks. Our results generalize existing formulations by accommodating rank-deficiencies in data, forward operators, and measurement processes. We validate our theoretical results by conducting numerical experiments on datasets from simple biomedical imaging, financial factor analysis, and simulations involving nonlinear fluid dynamics via the shallow water equations. This work provides a robust baseline for understanding and benchmarking learned neural network models for scientific machine learning problems.
