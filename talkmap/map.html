@@ -1,45 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Presentation Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+  <link rel="stylesheet" href="leaflet_dist/screen.css">
+</head>
+<body>
+  <div id="map" aria-label="Presentation locations"></div>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+  <script src="org-locations.js"></script>
+  <script>
+    var tiles = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 18,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    });
 
-    <!DOCTYPE html>
-    <html>
-    <head>
-    	<title>Leaflet debug page</title>
+    var map = L.map("map", {
+      center: [37.8, -96],
+      zoom: 4,
+      layers: [tiles],
+      scrollWheelZoom: false
+    });
 
-    	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2/leaflet.css" />
-    	<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.0.0-beta.2/leaflet.js"></script>
-    	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-    	<link rel="stylesheet" href="leaflet_dist/screen.css" />
+    var markers = L.markerClusterGroup({
+      showCoverageOnHover: false,
+      maxClusterRadius: 60
+    });
 
-    	<link rel="stylesheet" href="leaflet_dist/MarkerCluster.css" />
-    	<link rel="stylesheet" href="leaflet_dist/MarkerCluster.Default.css" />
-    	<script src="leaflet_dist/leaflet.markercluster-src.js"></script>
-    	<script src="org-locations.js"></script>
+    addressPoints.forEach(function(point) {
+      var marker = L.marker([point[1], point[2]], { title: point[0].replace(/<[^>]*>/g, " ") });
+      marker.bindPopup(point[0]);
+      markers.addLayer(marker);
+    });
 
-    </head>
-    <body>
+    map.addLayer(markers);
 
-    	<div id="map"></div>
-    	<span>Mouse over a cluster to see the bounds of its children and click a cluster to zoom to those bounds</span>
-    	<script type="text/javascript">
-    		var tiles = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
-              maxZoom: 18,
-              attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
-                    }),
-    			latlng = L.latLng(30, 10);
-    		var map = L.map('map', {center: latlng, zoom: 0.7, layers: [tiles]});
-    		var markers = L.markerClusterGroup({
-    			showCoverageOnHover: false,
-    			maxClusterRadius: 80
-    			});
-    		for (var i = 0; i < addressPoints.length; i++) {
-    			var a = addressPoints[i];
-    			var title = a[0];
-    			var marker = L.marker(new L.LatLng(a[1], a[2]), { title: title });
-    			marker.bindPopup(title);
-    			markers.addLayer(marker);
-    		}
-    		map.addLayer(markers);
-    		map.zoomIn();
-    	</script>
-    </body>
-    </html>
-    
+    if (addressPoints.length > 0) {
+      map.fitBounds(markers.getBounds().pad(0.18));
+    }
+  </script>
+</body>
+</html>

@@ -13,5 +13,7 @@ This page lists the public-facing sections currently used on the site. An [XML s
   <li><a href="{{ base_path }}/">Home</a></li>
   <li><a href="{{ base_path }}/news/">News</a></li>
   <li><a href="{{ base_path }}/publications/">Research</a></li>
+  <li><a href="{{ base_path }}/talks/">Talks and Presentations</a></li>
+  <li><a href="{{ base_path }}/talkmap.html">Presentation Map</a></li>
   <li><a href="{{ base_path }}/files/DeLiseAlexanderCV.pdf">CV</a></li>
 </ul>

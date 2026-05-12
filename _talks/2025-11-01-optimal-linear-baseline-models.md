@@ -5,6 +5,7 @@ type: "Invited Talk"
 permalink: /talks/2025-11-01-optimal-linear-baseline-models
 venue: "SIAM Student Chapter, Florida State University"
 date: 2025-11-01
+display_date: "Nov 2025"
 location: "Tallahassee, FL"
 ---
 
