@@ -1,17 +1,17 @@
 ---
 layout: archive
-title: "Publications"
+title: "Research"
 permalink: /publications/
 author_profile: true
 ---
 
 {% if site.author.googlescholar %}
-  <div class="wordwrap">You can also find my articles on <a href="{{site.author.googlescholar}}">my Google Scholar profile</a>.</div>
+  <div class="wordwrap">You can also find my work on <a href="{{site.author.googlescholar}}">my Google Scholar profile</a>.</div>
 {% endif %}
 
 {% include base_path %}
 
-{% assign publications = site.publications | sort: "date" | reverse %}
+{% assign publications = site.publications | sort: "date" %}
 {% assign current_year = "" %}
 
 <div class="publication-list">
