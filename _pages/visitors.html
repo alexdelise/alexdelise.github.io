@@ -18,9 +18,6 @@ sitemap: false
   <header class="visitor-map-page__header">
     <p class="visitor-map-page__eyebrow">Site analytics</p>
     <h1 id="visitor-map-title">Visitor Map</h1>
-    <p class="visitor-map-page__intro">
-      A minimal globe view of visitor locations, using a replaceable data layer in <code>_data/visitors.yml</code>.
-    </p>
   </header>
 
   <div class="visitor-map-stats" aria-label="Visitor summary">
@@ -40,13 +37,15 @@ sitemap: false
 
   <div class="visitor-map-layout">
     <div class="visitor-globe-panel" data-visitor-globe>
-      <canvas
+      <div
         id="visitor-globe"
         class="visitor-globe"
         tabindex="0"
         aria-label="Interactive visitor globe. Drag to rotate, use the mouse wheel or plus and minus keys to zoom."
-      ></canvas>
-      <div id="visitor-globe-tooltip" class="visitor-globe-tooltip" role="status" aria-live="polite"></div>
+      ></div>
+      <div id="visitor-globe-status" class="visitor-globe-status" role="status" aria-live="polite">
+        Loading globe geometry...
+      </div>
       <p class="visitor-globe-panel__hint">Drag to rotate. Scroll or use +/- to zoom.</p>
     </div>
 
@@ -59,4 +58,6 @@ sitemap: false
   </div>
 </section>
 
+<script defer src="https://cdn.jsdelivr.net/npm/globe.gl@2"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
 <script defer src="{{ base_path }}/assets/js/visitor-globe.js"></script>

@@ -2,463 +2,316 @@
   "use strict";
 
   var root = document.querySelector("[data-visitor-globe]");
-  var canvas = document.getElementById("visitor-globe");
-  var tooltip = document.getElementById("visitor-globe-tooltip");
+  var globeEl = document.getElementById("visitor-globe");
+  var status = document.getElementById("visitor-globe-status");
   var detail = document.getElementById("visitor-country-detail");
 
-  if (!root || !canvas || !tooltip || !detail) {
+  if (!root || !globeEl || !detail) {
     return;
   }
 
-  var ctx = canvas.getContext("2d");
-  var data = window.visitorAnalyticsData || { countries: [] };
-  var countryData = (data.countries || []).slice();
-  var countryByCode = countryData.reduce(function (acc, country) {
-    acc[country.code] = country;
-    return acc;
-  }, {});
-
-  var LANDMASSES = [
-    {
-      name: "North America",
-      polygons: [
-        [
-          [-168, 72],
-          [-128, 73],
-          [-92, 70],
-          [-58, 57],
-          [-52, 45],
-          [-78, 25],
-          [-98, 15],
-          [-118, 24],
-          [-130, 45],
-          [-168, 58]
-        ]
-      ]
-    },
-    {
-      name: "South America",
-      polygons: [
-        [
-          [-82, 12],
-          [-60, 8],
-          [-36, -8],
-          [-44, -32],
-          [-58, -55],
-          [-74, -42],
-          [-80, -18]
-        ]
-      ]
-    },
-    {
-      name: "Europe",
-      polygons: [
-        [
-          [-11, 58],
-          [10, 66],
-          [32, 60],
-          [36, 43],
-          [20, 36],
-          [0, 42],
-          [-11, 50]
-        ]
-      ]
-    },
-    {
-      name: "Africa",
-      polygons: [
-        [
-          [-18, 34],
-          [12, 37],
-          [38, 20],
-          [50, -6],
-          [31, -35],
-          [7, -35],
-          [-12, -18],
-          [-18, 8]
-        ]
-      ]
-    },
-    {
-      name: "Asia",
-      polygons: [
-        [
-          [34, 57],
-          [78, 70],
-          [143, 58],
-          [154, 34],
-          [122, 10],
-          [86, 8],
-          [58, 24],
-          [34, 40]
-        ]
-      ]
-    },
-    {
-      name: "Australia",
-      polygons: [
-        [
-          [112, -11],
-          [154, -10],
-          [153, -38],
-          [133, -44],
-          [113, -34]
-        ]
-      ]
-    },
-    {
-      name: "Greenland",
-      polygons: [
-        [
-          [-52, 82],
-          [-25, 76],
-          [-30, 60],
-          [-48, 58],
-          [-64, 68]
-        ]
-      ]
-    }
-  ];
-
-  var COUNTRY_SHAPES = {
-    AU: [
-      [
-        [112, -11],
-        [154, -10],
-        [153, -38],
-        [133, -44],
-        [113, -34]
-      ]
-    ],
-    BR: [
-      [
-        [-74, 5],
-        [-50, 4],
-        [-35, -8],
-        [-43, -24],
-        [-54, -34],
-        [-66, -24],
-        [-74, -10]
-      ]
-    ],
-    CA: [
-      [
-        [-141, 70],
-        [-58, 70],
-        [-52, 50],
-        [-75, 44],
-        [-96, 49],
-        [-125, 49],
-        [-141, 60]
-      ]
-    ],
-    DE: [
-      [
-        [5, 55],
-        [15, 55],
-        [15, 47],
-        [6, 47],
-        [5, 51]
-      ]
-    ],
-    GB: [
-      [
-        [-8, 58],
-        [2, 58],
-        [2, 50],
-        [-6, 50]
-      ]
-    ],
-    IN: [
-      [
-        [68, 36],
-        [90, 28],
-        [88, 8],
-        [76, 7],
-        [68, 22]
-      ]
-    ],
-    US: [
-      [
-        [-124, 49],
-        [-67, 49],
-        [-67, 25],
-        [-82, 25],
-        [-97, 26],
-        [-106, 31],
-        [-117, 32],
-        [-124, 41]
-      ],
-      [
-        [-168, 71],
-        [-141, 70],
-        [-130, 58],
-        [-151, 54],
-        [-168, 60]
-      ],
-      [
-        [-161, 23],
-        [-154, 23],
-        [-154, 18],
-        [-161, 18]
-      ]
-    ]
+  var WORLD_TOPOLOGY_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
+  var ISO_NUMERIC_BY_ALPHA2 = {
+    AD: "020",
+    AE: "784",
+    AF: "004",
+    AG: "028",
+    AI: "660",
+    AL: "008",
+    AM: "051",
+    AO: "024",
+    AQ: "010",
+    AR: "032",
+    AS: "016",
+    AT: "040",
+    AU: "036",
+    AW: "533",
+    AX: "248",
+    AZ: "031",
+    BA: "070",
+    BB: "052",
+    BD: "050",
+    BE: "056",
+    BF: "854",
+    BG: "100",
+    BH: "048",
+    BI: "108",
+    BJ: "204",
+    BL: "652",
+    BM: "060",
+    BN: "096",
+    BO: "068",
+    BQ: "535",
+    BR: "076",
+    BS: "044",
+    BT: "064",
+    BV: "074",
+    BW: "072",
+    BY: "112",
+    BZ: "084",
+    CA: "124",
+    CC: "166",
+    CD: "180",
+    CF: "140",
+    CG: "178",
+    CH: "756",
+    CI: "384",
+    CK: "184",
+    CL: "152",
+    CM: "120",
+    CN: "156",
+    CO: "170",
+    CR: "188",
+    CU: "192",
+    CV: "132",
+    CW: "531",
+    CX: "162",
+    CY: "196",
+    CZ: "203",
+    DE: "276",
+    DJ: "262",
+    DK: "208",
+    DM: "212",
+    DO: "214",
+    DZ: "012",
+    EC: "218",
+    EE: "233",
+    EG: "818",
+    EH: "732",
+    ER: "232",
+    ES: "724",
+    ET: "231",
+    FI: "246",
+    FJ: "242",
+    FK: "238",
+    FM: "583",
+    FO: "234",
+    FR: "250",
+    GA: "266",
+    GB: "826",
+    GD: "308",
+    GE: "268",
+    GF: "254",
+    GG: "831",
+    GH: "288",
+    GI: "292",
+    GL: "304",
+    GM: "270",
+    GN: "324",
+    GP: "312",
+    GQ: "226",
+    GR: "300",
+    GS: "239",
+    GT: "320",
+    GU: "316",
+    GW: "624",
+    GY: "328",
+    HK: "344",
+    HM: "334",
+    HN: "340",
+    HR: "191",
+    HT: "332",
+    HU: "348",
+    ID: "360",
+    IE: "372",
+    IL: "376",
+    IM: "833",
+    IN: "356",
+    IO: "086",
+    IQ: "368",
+    IR: "364",
+    IS: "352",
+    IT: "380",
+    JE: "832",
+    JM: "388",
+    JO: "400",
+    JP: "392",
+    KE: "404",
+    KG: "417",
+    KH: "116",
+    KI: "296",
+    KM: "174",
+    KN: "659",
+    KP: "408",
+    KR: "410",
+    KW: "414",
+    KY: "136",
+    KZ: "398",
+    LA: "418",
+    LB: "422",
+    LC: "662",
+    LI: "438",
+    LK: "144",
+    LR: "430",
+    LS: "426",
+    LT: "440",
+    LU: "442",
+    LV: "428",
+    LY: "434",
+    MA: "504",
+    MC: "492",
+    MD: "498",
+    ME: "499",
+    MF: "663",
+    MG: "450",
+    MH: "584",
+    MK: "807",
+    ML: "466",
+    MM: "104",
+    MN: "496",
+    MO: "446",
+    MP: "580",
+    MQ: "474",
+    MR: "478",
+    MS: "500",
+    MT: "470",
+    MU: "480",
+    MV: "462",
+    MW: "454",
+    MX: "484",
+    MY: "458",
+    MZ: "508",
+    NA: "516",
+    NC: "540",
+    NE: "562",
+    NF: "574",
+    NG: "566",
+    NI: "558",
+    NL: "528",
+    NO: "578",
+    NP: "524",
+    NR: "520",
+    NU: "570",
+    NZ: "554",
+    OM: "512",
+    PA: "591",
+    PE: "604",
+    PF: "258",
+    PG: "598",
+    PH: "608",
+    PK: "586",
+    PL: "616",
+    PM: "666",
+    PN: "612",
+    PR: "630",
+    PS: "275",
+    PT: "620",
+    PW: "585",
+    PY: "600",
+    QA: "634",
+    RE: "638",
+    RO: "642",
+    RS: "688",
+    RU: "643",
+    RW: "646",
+    SA: "682",
+    SB: "090",
+    SC: "690",
+    SD: "729",
+    SE: "752",
+    SG: "702",
+    SH: "654",
+    SI: "705",
+    SJ: "744",
+    SK: "703",
+    SL: "694",
+    SM: "674",
+    SN: "686",
+    SO: "706",
+    SR: "740",
+    SS: "728",
+    ST: "678",
+    SV: "222",
+    SX: "534",
+    SY: "760",
+    SZ: "748",
+    TC: "796",
+    TD: "148",
+    TF: "260",
+    TG: "768",
+    TH: "764",
+    TJ: "762",
+    TK: "772",
+    TL: "626",
+    TM: "795",
+    TN: "788",
+    TO: "776",
+    TR: "792",
+    TT: "780",
+    TV: "798",
+    TW: "158",
+    TZ: "834",
+    UA: "804",
+    UG: "800",
+    UM: "581",
+    US: "840",
+    UY: "858",
+    UZ: "860",
+    VA: "336",
+    VC: "670",
+    VE: "862",
+    VG: "092",
+    VI: "850",
+    VN: "704",
+    VU: "548",
+    WF: "876",
+    WS: "882",
+    YE: "887",
+    YT: "175",
+    ZA: "710",
+    ZM: "894",
+    ZW: "716"
   };
 
-  var colors = {};
-  var width = 0;
-  var height = 0;
-  var pixelRatio = 1;
-  var radius = 0;
-  var centerX = 0;
-  var centerY = 0;
-  var rotation = { lon: -35, lat: 22 };
-  var zoom = 1;
-  var hoveredCode = null;
-  var selectedCode = null;
-  var hitTargets = [];
-  var isDragging = false;
-  var dragStart = null;
-  var dragMoved = false;
+  var data = window.visitorAnalyticsData || { countries: [] };
+  var countryData = (data.countries || []).slice();
+  var visitorByNumericId = countryData.reduce(function (acc, country) {
+    var numericId = ISO_NUMERIC_BY_ALPHA2[country.code];
 
-  function clamp(value, min, max) {
-    return Math.max(min, Math.min(max, value));
+    if (numericId) {
+      acc[numericId] = country;
+    }
+
+    return acc;
+  }, {});
+  var colors = {};
+  var globe = null;
+  var countries = [];
+  var hoveredFeature = null;
+  var selectedFeature = null;
+
+  function setStatus(message, isHidden) {
+    if (!status) {
+      return;
+    }
+
+    status.textContent = message || "";
+    status.classList.toggle("is-hidden", Boolean(isHidden));
   }
 
   function readColors() {
     var style = getComputedStyle(document.documentElement);
+
     colors = {
       water: style.getPropertyValue("--visitor-water-color").trim() || "#2d353b",
       land: style.getPropertyValue("--visitor-land-color").trim() || "#475258",
-      line: style.getPropertyValue("--visitor-globe-line-color").trim() || "rgba(211, 198, 170, 0.16)",
+      border: style.getPropertyValue("--visitor-country-border-color").trim() || "rgba(211, 198, 170, 0.34)",
       highlight: style.getPropertyValue("--visitor-accent-pink").trim() || "#d699b6",
-      text: style.getPropertyValue("--global-text-color").trim() || "#d3c6aa",
-      border: style.getPropertyValue("--global-border-color").trim() || "#56635f"
+      hover: style.getPropertyValue("--global-text-color").trim() || "#d3c6aa",
+      background: style.getPropertyValue("--global-surface-color").trim() || "#343f44"
     };
   }
 
-  function project(lon, lat) {
-    var deg = Math.PI / 180;
-    var lambda = (lon - rotation.lon) * deg;
-    var phi = lat * deg;
-    var phi0 = rotation.lat * deg;
-    var cosPhi = Math.cos(phi);
-    var cosc = Math.sin(phi0) * Math.sin(phi) + Math.cos(phi0) * cosPhi * Math.cos(lambda);
-
-    return {
-      x: centerX + radius * cosPhi * Math.sin(lambda),
-      y: centerY - radius * (Math.cos(phi0) * Math.sin(phi) - Math.sin(phi0) * cosPhi * Math.cos(lambda)),
-      visible: cosc > -0.02,
-      depth: cosc
-    };
-  }
-
-  function buildVisiblePolygon(points) {
-    var projected = [];
-
-    points.forEach(function (point) {
-      var p = project(point[0], point[1]);
-      if (p.visible) {
-        projected.push(p);
-      }
-    });
-
-    return projected;
-  }
-
-  function drawProjectedPolygon(points, fill, stroke, lineWidth) {
-    if (points.length < 3) {
-      return;
+  function normalizeCountryId(value) {
+    if (value === null || value === undefined) {
+      return "";
     }
 
-    ctx.beginPath();
-    ctx.moveTo(points[0].x, points[0].y);
-
-    for (var i = 1; i < points.length; i += 1) {
-      ctx.lineTo(points[i].x, points[i].y);
-    }
-
-    ctx.closePath();
-    ctx.fillStyle = fill;
-    ctx.fill();
-
-    if (stroke) {
-      ctx.strokeStyle = stroke;
-      ctx.lineWidth = lineWidth || 1;
-      ctx.stroke();
-    }
+    return String(value).padStart(3, "0");
   }
 
-  function drawGeoLine(points) {
-    var started = false;
-
-    ctx.beginPath();
-
-    points.forEach(function (point) {
-      var p = project(point[0], point[1]);
-
-      if (!p.visible) {
-        started = false;
-        return;
-      }
-
-      if (!started) {
-        ctx.moveTo(p.x, p.y);
-        started = true;
-      } else {
-        ctx.lineTo(p.x, p.y);
-      }
-    });
-
-    ctx.stroke();
-  }
-
-  function drawGraticule() {
-    var points;
-    var lon;
-    var lat;
-
-    ctx.save();
-    ctx.strokeStyle = colors.line;
-    ctx.lineWidth = 1;
-
-    for (lat = -60; lat <= 60; lat += 30) {
-      points = [];
-      for (lon = -180; lon <= 180; lon += 4) {
-        points.push([lon, lat]);
-      }
-      drawGeoLine(points);
-    }
-
-    for (lon = -150; lon <= 180; lon += 30) {
-      points = [];
-      for (lat = -80; lat <= 80; lat += 4) {
-        points.push([lon, lat]);
-      }
-      drawGeoLine(points);
-    }
-
-    ctx.restore();
-  }
-
-  function drawLandmasses() {
-    LANDMASSES.forEach(function (landmass) {
-      landmass.polygons.forEach(function (polygon) {
-        drawProjectedPolygon(buildVisiblePolygon(polygon), colors.land, null, 0);
-      });
-    });
-  }
-
-  function drawVisitorCountries() {
-    hitTargets = [];
-
-    countryData.forEach(function (country) {
-      var polygons = COUNTRY_SHAPES[country.code];
-      var isActive = country.code === hoveredCode || country.code === selectedCode;
-
-      if (!polygons) {
-        return;
-      }
-
-      polygons.forEach(function (polygon) {
-        var projected = buildVisiblePolygon(polygon);
-
-        if (projected.length < 3) {
-          return;
-        }
-
-        drawProjectedPolygon(
-          projected,
-          colors.highlight,
-          isActive ? colors.text : colors.water,
-          isActive ? 2 : 1
-        );
-        hitTargets.push({
-          code: country.code,
-          points: projected
-        });
-      });
-    });
-  }
-
-  function render() {
-    readColors();
-
-    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-    ctx.clearRect(0, 0, width, height);
-
-    radius = Math.min(width, height) * 0.41 * zoom;
-    centerX = width / 2;
-    centerY = height / 2;
-
-    ctx.save();
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    ctx.fillStyle = colors.water;
-    ctx.fill();
-    ctx.clip();
-
-    drawGraticule();
-    drawLandmasses();
-    drawVisitorCountries();
-
-    ctx.restore();
-
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    ctx.strokeStyle = colors.border;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-  }
-
-  function resize() {
-    var rect = root.getBoundingClientRect();
-
-    width = Math.max(320, Math.round(rect.width));
-    height = Math.max(420, Math.round(canvas.getBoundingClientRect().height || 420));
-    pixelRatio = window.devicePixelRatio || 1;
-    canvas.width = Math.round(width * pixelRatio);
-    canvas.height = Math.round(height * pixelRatio);
-    canvas.style.width = width + "px";
-    canvas.style.height = height + "px";
-    render();
-  }
-
-  function pointInPolygon(x, y, points) {
-    var inside = false;
-    var i;
-    var j;
-    var xi;
-    var yi;
-    var xj;
-    var yj;
-    var intersects;
-
-    for (i = 0, j = points.length - 1; i < points.length; j = i, i += 1) {
-      xi = points[i].x;
-      yi = points[i].y;
-      xj = points[j].x;
-      yj = points[j].y;
-      intersects = yi > y !== yj > y && x < ((xj - xi) * (y - yi)) / (yj - yi) + xi;
-
-      if (intersects) {
-        inside = !inside;
-      }
-    }
-
-    return inside;
-  }
-
-  function findCountryAt(x, y) {
-    var i;
-
-    for (i = hitTargets.length - 1; i >= 0; i -= 1) {
-      if (pointInPolygon(x, y, hitTargets[i].points)) {
-        return countryByCode[hitTargets[i].code] || null;
-      }
-    }
-
-    return null;
+  function featureVisitor(feature) {
+    return feature && feature.properties ? feature.properties.visitorData : null;
   }
 
   function escapeHtml(value) {
@@ -482,8 +335,9 @@
 
   function countryMarkup(country, compact) {
     var states = sortedStates(country);
-    var html = "<strong>" + escapeHtml(country.name) + "</strong>";
+    var html = '<div class="visitor-globe-label">';
 
+    html += "<strong>" + escapeHtml(country.name) + "</strong>";
     html += "<span>" + country.visitors + " " + visitorLabel(country.visitors) + "</span>";
 
     if (country.code === "US" && states.length) {
@@ -494,6 +348,7 @@
       html += "</ul>";
     }
 
+    html += "</div>";
     return html;
   }
 
@@ -506,157 +361,217 @@
     detail.innerHTML = countryMarkup(country, false);
   }
 
-  function showTooltip(country, x, y) {
-    var tooltipX = clamp(x, 120, Math.max(120, width - 120));
-    var tooltipY = clamp(y, 72, Math.max(72, height - 12));
-
-    tooltip.innerHTML = countryMarkup(country, true);
-    tooltip.style.left = tooltipX + "px";
-    tooltip.style.top = tooltipY + "px";
-    tooltip.classList.add("is-visible");
+  function polygonCapColor(feature) {
+    return featureVisitor(feature) ? colors.highlight : colors.land;
   }
 
-  function hideTooltip() {
-    tooltip.classList.remove("is-visible");
+  function polygonSideColor(feature) {
+    return featureVisitor(feature) ? colors.highlight : colors.land;
   }
 
-  function pointerPosition(event) {
-    var rect = canvas.getBoundingClientRect();
-
-    return {
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top
-    };
-  }
-
-  function updateHover(event) {
-    var pos = pointerPosition(event);
-    var country = findCountryAt(pos.x, pos.y);
-    var nextCode = country ? country.code : null;
-
-    if (nextCode !== hoveredCode) {
-      hoveredCode = nextCode;
-      canvas.style.cursor = country ? "pointer" : "grab";
-      render();
+  function polygonStrokeColor(feature) {
+    if (feature === hoveredFeature || feature === selectedFeature) {
+      return colors.hover;
     }
 
-    if (country) {
-      showTooltip(country, pos.x, pos.y);
-      setDetail(country);
-    } else {
-      hideTooltip();
-      setDetail(selectedCode ? countryByCode[selectedCode] : null);
+    return colors.border;
+  }
+
+  function polygonAltitude(feature) {
+    if (feature === hoveredFeature || feature === selectedFeature) {
+      return 0.018;
+    }
+
+    return featureVisitor(feature) ? 0.012 : 0.004;
+  }
+
+  function polygonLabel(feature) {
+    var visitor = featureVisitor(feature);
+
+    return visitor ? countryMarkup(visitor, true) : null;
+  }
+
+  function resizeGlobe() {
+    var rect = root.getBoundingClientRect();
+    var height = globeEl.getBoundingClientRect().height || 520;
+
+    if (globe) {
+      globe.width(Math.max(320, Math.round(rect.width)));
+      globe.height(Math.max(420, Math.round(height)));
     }
   }
 
-  canvas.addEventListener("pointerdown", function (event) {
-    var pos = pointerPosition(event);
+  function refreshTheme() {
+    var material;
 
-    isDragging = true;
-    dragMoved = false;
-    dragStart = {
-      x: pos.x,
-      y: pos.y,
-      lon: rotation.lon,
-      lat: rotation.lat
-    };
-    canvas.setPointerCapture(event.pointerId);
-    hideTooltip();
-  });
+    readColors();
 
-  canvas.addEventListener("pointermove", function (event) {
-    var pos;
-    var dx;
-    var dy;
-
-    if (!isDragging || !dragStart) {
-      updateHover(event);
+    if (!globe) {
       return;
     }
 
-    pos = pointerPosition(event);
-    dx = pos.x - dragStart.x;
-    dy = pos.y - dragStart.y;
+    globe.backgroundColor(colors.background);
+    material = globe.globeMaterial();
 
-    if (Math.abs(dx) + Math.abs(dy) > 5) {
-      dragMoved = true;
+    if (material && material.color && material.color.set) {
+      material.color.set(colors.water);
     }
 
-    rotation.lon = dragStart.lon - dx * 0.35;
-    rotation.lat = clamp(dragStart.lat + dy * 0.28, -70, 70);
-    hoveredCode = null;
-    render();
-  });
-
-  canvas.addEventListener("pointerup", function (event) {
-    var pos;
-    var country;
-
-    isDragging = false;
-    canvas.releasePointerCapture(event.pointerId);
-
-    if (!dragMoved) {
-      pos = pointerPosition(event);
-      country = findCountryAt(pos.x, pos.y);
-      selectedCode = country ? country.code : selectedCode;
-      setDetail(country || (selectedCode ? countryByCode[selectedCode] : null));
-    }
-  });
-
-  canvas.addEventListener("pointerleave", function () {
-    if (!isDragging) {
-      hoveredCode = null;
-      hideTooltip();
-      canvas.style.cursor = "grab";
-      setDetail(selectedCode ? countryByCode[selectedCode] : null);
-      render();
-    }
-  });
-
-  canvas.addEventListener(
-    "wheel",
-    function (event) {
-      event.preventDefault();
-      zoom = clamp(zoom * (event.deltaY > 0 ? 0.9 : 1.1), 0.72, 1.7);
-      render();
-    },
-    { passive: false }
-  );
-
-  canvas.addEventListener("keydown", function (event) {
-    var handled = true;
-
-    if (event.key === "ArrowLeft") {
-      rotation.lon -= 10;
-    } else if (event.key === "ArrowRight") {
-      rotation.lon += 10;
-    } else if (event.key === "ArrowUp") {
-      rotation.lat = clamp(rotation.lat + 8, -70, 70);
-    } else if (event.key === "ArrowDown") {
-      rotation.lat = clamp(rotation.lat - 8, -70, 70);
-    } else if (event.key === "+" || event.key === "=") {
-      zoom = clamp(zoom * 1.1, 0.72, 1.7);
-    } else if (event.key === "-" || event.key === "_") {
-      zoom = clamp(zoom * 0.9, 0.72, 1.7);
-    } else if (event.key === "Home") {
-      rotation = { lon: -35, lat: 22 };
-      zoom = 1;
-    } else {
-      handled = false;
+    if (material && material.emissive && material.emissive.set) {
+      material.emissive.set(colors.water);
     }
 
-    if (handled) {
-      event.preventDefault();
-      render();
-    }
-  });
-
-  if ("ResizeObserver" in window) {
-    new ResizeObserver(resize).observe(root);
-  } else {
-    window.addEventListener("resize", resize);
+    globe
+      .polygonCapColor(polygonCapColor)
+      .polygonSideColor(polygonSideColor)
+      .polygonStrokeColor(polygonStrokeColor)
+      .polygonAltitude(polygonAltitude);
   }
 
-  setDetail(null);
-  resize();
+  function movePointOfView(deltaLng, deltaLat, deltaAltitude) {
+    var point = globe.pointOfView();
+
+    globe.pointOfView(
+      {
+        lat: Math.max(-70, Math.min(70, (point.lat || 0) + deltaLat)),
+        lng: (point.lng || 0) + deltaLng,
+        altitude: Math.max(1.25, Math.min(3.6, (point.altitude || 2.25) + deltaAltitude))
+      },
+      250
+    );
+  }
+
+  function wireKeyboardControls() {
+    globeEl.addEventListener("keydown", function (event) {
+      var handled = true;
+
+      if (event.key === "ArrowLeft") {
+        movePointOfView(-12, 0, 0);
+      } else if (event.key === "ArrowRight") {
+        movePointOfView(12, 0, 0);
+      } else if (event.key === "ArrowUp") {
+        movePointOfView(0, 8, 0);
+      } else if (event.key === "ArrowDown") {
+        movePointOfView(0, -8, 0);
+      } else if (event.key === "+" || event.key === "=") {
+        movePointOfView(0, 0, -0.25);
+      } else if (event.key === "-" || event.key === "_") {
+        movePointOfView(0, 0, 0.25);
+      } else if (event.key === "Home") {
+        globe.pointOfView({ lat: 20, lng: -35, altitude: 2.25 }, 350);
+      } else {
+        handled = false;
+      }
+
+      if (handled) {
+        event.preventDefault();
+      }
+    });
+  }
+
+  function enrichCountries(world) {
+    countries = window.topojson.feature(world, world.objects.countries).features;
+
+    countries.forEach(function (feature) {
+      var visitor = visitorByNumericId[normalizeCountryId(feature.id)];
+
+      feature.properties = feature.properties || {};
+      feature.properties.visitorData = visitor || null;
+    });
+  }
+
+  function initializeGlobe() {
+    var controls;
+
+    readColors();
+
+    globe = new window.Globe(globeEl, {
+      rendererConfig: { antialias: true, alpha: true }
+    })
+      .backgroundColor(colors.background)
+      .showAtmosphere(false)
+      .showGraticules(false)
+      .globeImageUrl(null)
+      .polygonsData(countries)
+      .polygonGeoJsonGeometry("geometry")
+      .polygonCapColor(polygonCapColor)
+      .polygonSideColor(polygonSideColor)
+      .polygonStrokeColor(polygonStrokeColor)
+      .polygonAltitude(polygonAltitude)
+      .polygonLabel(polygonLabel)
+      .polygonCapCurvatureResolution(2)
+      .polygonsTransitionDuration(120)
+      .onPolygonHover(function (feature) {
+        var visitor = featureVisitor(feature);
+
+        hoveredFeature = visitor ? feature : null;
+        globeEl.classList.toggle("is-hovering", Boolean(visitor));
+        setDetail(visitor || featureVisitor(selectedFeature));
+        globe
+          .polygonStrokeColor(polygonStrokeColor)
+          .polygonAltitude(polygonAltitude);
+      })
+      .onPolygonClick(function (feature) {
+        if (!featureVisitor(feature)) {
+          return;
+        }
+
+        selectedFeature = feature;
+        setDetail(featureVisitor(feature));
+        globe
+          .polygonStrokeColor(polygonStrokeColor)
+          .polygonAltitude(polygonAltitude);
+      });
+
+    controls = globe.controls();
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+    controls.rotateSpeed = 0.45;
+    controls.zoomSpeed = 0.7;
+    controls.minDistance = 170;
+    controls.maxDistance = 520;
+
+    refreshTheme();
+    resizeGlobe();
+    globe.pointOfView({ lat: 20, lng: -35, altitude: 2.25 }, 0);
+    wireKeyboardControls();
+    setDetail(null);
+    setStatus("", true);
+  }
+
+  if (!window.Globe || !window.topojson) {
+    setStatus("Unable to load the globe libraries.", false);
+    return;
+  }
+
+  fetch(WORLD_TOPOLOGY_URL)
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("World topology request failed.");
+      }
+
+      return response.json();
+    })
+    .then(function (world) {
+      enrichCountries(world);
+      initializeGlobe();
+    })
+    .catch(function () {
+      setStatus("Unable to load the country geometry.", false);
+    });
+
+  if ("ResizeObserver" in window) {
+    new ResizeObserver(resizeGlobe).observe(root);
+  } else {
+    window.addEventListener("resize", resizeGlobe);
+  }
+
+  if ("MutationObserver" in window) {
+    new MutationObserver(refreshTheme).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"]
+    });
+  }
+
+  window.addEventListener("storage", refreshTheme);
 })();
