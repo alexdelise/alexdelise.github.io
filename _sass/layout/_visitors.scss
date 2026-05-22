@@ -78,6 +78,10 @@ html[data-theme="dark"] {
   text-transform: uppercase;
 }
 
+.visitor-map-page__intro {
+  color: var(--global-text-color-light);
+}
+
 .visitor-map-stats {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
