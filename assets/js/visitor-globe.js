@@ -13,6 +13,7 @@
   var WORLD_TOPOLOGY_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
   var US_TOPOLOGY_URL = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
   var US_STATE_ZOOM_ALTITUDE = 1.65;
+  var US_DETAIL_VIEW = { lat: 39, lng: -98, altitude: 1.35 };
   var NORTH_AMERICA_VIEW = { lat: 42, lng: -98, altitude: 2.05 };
   var ISO_NUMERIC_BY_ALPHA2 = {
     AD: "020",
@@ -486,6 +487,150 @@
     return visitor ? countryMarkup(visitor, true) : null;
   }
 
+  function collectPositions(coords, positions) {
+    if (!coords) {
+      return;
+    }
+
+    if (typeof coords[0] === "number" && typeof coords[1] === "number") {
+      positions.push(coords);
+      return;
+    }
+
+    coords.forEach(function (child) {
+      collectPositions(child, positions);
+    });
+  }
+
+  function featurePositions(feature) {
+    var positions = [];
+
+    if (feature && feature.geometry) {
+      collectPositions(feature.geometry.coordinates, positions);
+    }
+
+    return positions;
+  }
+
+  function featureCenter(feature) {
+    var positions = featurePositions(feature);
+    var x = 0;
+    var y = 0;
+    var z = 0;
+
+    if (!positions.length) {
+      return null;
+    }
+
+    positions.forEach(function (position) {
+      var lng = position[0] * Math.PI / 180;
+      var lat = position[1] * Math.PI / 180;
+
+      x += Math.cos(lat) * Math.cos(lng);
+      y += Math.cos(lat) * Math.sin(lng);
+      z += Math.sin(lat);
+    });
+
+    x /= positions.length;
+    y /= positions.length;
+    z /= positions.length;
+
+    return {
+      lat: Math.atan2(z, Math.sqrt(x * x + y * y)) * 180 / Math.PI,
+      lng: Math.atan2(y, x) * 180 / Math.PI
+    };
+  }
+
+  function featureSpan(feature) {
+    var positions = featurePositions(feature);
+    var minLat = 90;
+    var maxLat = -90;
+    var minLng = 180;
+    var maxLng = -180;
+
+    positions.forEach(function (position) {
+      minLng = Math.min(minLng, position[0]);
+      maxLng = Math.max(maxLng, position[0]);
+      minLat = Math.min(minLat, position[1]);
+      maxLat = Math.max(maxLat, position[1]);
+    });
+
+    if (!positions.length) {
+      return 30;
+    }
+
+    return Math.max(maxLat - minLat, maxLng - minLng);
+  }
+
+  function featureFocusAltitude(feature, visitor) {
+    var span;
+
+    if (visitor && visitor.code === "US" && featureKind(feature) === "country") {
+      return US_DETAIL_VIEW.altitude;
+    }
+
+    if (featureKind(feature) === "state") {
+      return 1.25;
+    }
+
+    span = featureSpan(feature);
+
+    if (span > 80) {
+      return 2.35;
+    }
+
+    if (span > 40) {
+      return 2;
+    }
+
+    if (span > 20) {
+      return 1.7;
+    }
+
+    if (span > 8) {
+      return 1.45;
+    }
+
+    return 1.25;
+  }
+
+  function focusFeature(feature, visitor) {
+    var center = featureCenter(feature);
+    var point;
+    var duration = 650;
+
+    if (visitor && visitor.code === "US" && featureKind(feature) === "country") {
+      point = US_DETAIL_VIEW;
+    } else if (center) {
+      point = {
+        lat: Math.max(-70, Math.min(70, center.lat)),
+        lng: center.lng,
+        altitude: featureFocusAltitude(feature, visitor)
+      };
+    }
+
+    if (!point) {
+      return;
+    }
+
+    globe.pointOfView(point, duration);
+
+    window.setTimeout(function () {
+      if (visitor && visitor.code === "US" && featureKind(feature) === "country") {
+        showStateBreakdown = true;
+        hoveredFeature = null;
+        selectedFeature = null;
+        globeEl.classList.remove("is-hovering");
+        globe.polygonsData(visiblePolygons());
+        refreshTheme();
+      } else {
+        syncStateBreakdown(false);
+      }
+
+      setDetail(visitor);
+    }, duration + 40);
+  }
+
   function resizeGlobe() {
     var rect = root.getBoundingClientRect();
     var height = globeEl.getBoundingClientRect().height || 520;
@@ -672,12 +817,15 @@
           .polygonAltitude(polygonAltitude);
       })
       .onPolygonClick(function (feature) {
-        if (!featureVisitor(feature)) {
+        var visitor = featureVisitor(feature);
+
+        if (!visitor) {
           return;
         }
 
         selectedFeature = feature;
-        setDetail(featureVisitor(feature));
+        setDetail(visitor);
+        focusFeature(feature, visitor);
         globe
           .polygonStrokeColor(polygonStrokeColor)
           .polygonAltitude(polygonAltitude);
