@@ -18,3 +18,8 @@ package-lock.json
 
 # Ignore folders related to IDEs
 .vscode/
+
+# Ignore local Cloudflare Worker deployment state
+analytics-worker/.wrangler/
+analytics-worker/.dev.vars
+analytics-worker/wrangler.toml

@@ -1,0 +1,10 @@
+name = "visitor-analytics"
+main = "worker.mjs"
+compatibility_date = "2026-05-22"
+
+kv_namespaces = [
+  { binding = "VISITOR_COUNTS", id = "replace-with-kv-namespace-id" }
+]
+
+[vars]
+ALLOWED_ORIGINS = "https://alexdelise.com,https://alexdelise.github.io,http://localhost:4000,http://127.0.0.1:4000"

@@ -157,6 +157,11 @@ analytics:
   google:
     tracking_id          :
 
+visitor_analytics:
+  api_url                : "https://alexdelise.workers.dev" # Set to the deployed Cloudflare Worker URL, e.g. https://visitor-analytics.example.workers.dev
+  track                  : true
+  refresh_interval_ms    : 30000
+
 
 # Reading Files
 include:
@@ -184,6 +189,7 @@ exclude:
   - LICENSE
   - local
   - log
+  - analytics-worker
   - node_modules
   - package.json*
   - Rakefile

@@ -1,3 +1,8 @@
 <script>
   window.visitorAnalyticsData = {{ site.data.visitors | jsonify }};
+  window.visitorAnalyticsConfig = {
+    apiUrl: {{ site.visitor_analytics.api_url | default: "" | jsonify }},
+    track: {{ site.visitor_analytics.track | jsonify }},
+    refreshIntervalMs: {{ site.visitor_analytics.refresh_interval_ms | jsonify }}
+  };
 </script>

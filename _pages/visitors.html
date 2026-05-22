@@ -7,7 +7,6 @@ sitemap: false
 ---
 
 {% include base_path %}
-{% include visitor-data-script.html %}
 
 {% assign visitor_total = 0 %}
 {% for country in site.data.visitors.countries %}
@@ -26,11 +25,11 @@ sitemap: false
       <span class="visitor-map-stat__label">Visitors</span>
     </div>
     <div class="visitor-map-stat">
-      <span class="visitor-map-stat__value">{{ site.data.visitors.countries | size }}</span>
+      <span class="visitor-map-stat__value" data-visitor-country-count>{{ site.data.visitors.countries | size }}</span>
       <span class="visitor-map-stat__label">Countries</span>
     </div>
     <div class="visitor-map-stat">
-      <span class="visitor-map-stat__value">{{ site.data.visitors.updated | date: "%b %d, %Y" }}</span>
+      <span class="visitor-map-stat__value" data-visitor-updated>{{ site.data.visitors.updated | date: "%b %d, %Y" }}</span>
       <span class="visitor-map-stat__label">Updated</span>
     </div>
   </div>

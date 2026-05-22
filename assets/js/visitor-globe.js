@@ -321,28 +321,10 @@
   };
 
   var data = window.visitorAnalyticsData || { countries: [] };
-  var countryData = (data.countries || []).slice();
-  var usVisitorData = countryData.find(function (country) {
-    return country.code === "US";
-  });
-  var visitorByNumericId = countryData.reduce(function (acc, country) {
-    var numericId = ISO_NUMERIC_BY_ALPHA2[country.code];
-
-    if (numericId) {
-      acc[numericId] = country;
-    }
-
-    return acc;
-  }, {});
-  var stateVisitorByFips = ((usVisitorData && usVisitorData.states) || []).reduce(function (acc, state) {
-    var fips = STATE_FIPS_BY_ALPHA2[state.code];
-
-    if (fips) {
-      acc[fips] = state;
-    }
-
-    return acc;
-  }, {});
+  var countryData = [];
+  var usVisitorData = null;
+  var visitorByNumericId = {};
+  var stateVisitorByFips = {};
   var colors = {};
   var globe = null;
   var countries = [];
@@ -372,6 +354,32 @@
       hover: style.getPropertyValue("--global-text-color").trim() || "#d3c6aa",
       background: style.getPropertyValue("--global-surface-color").trim() || "#343f44"
     };
+  }
+
+  function rebuildVisitorIndexes(nextData) {
+    data = nextData || { countries: [] };
+    countryData = (data.countries || []).slice();
+    usVisitorData = countryData.find(function (country) {
+      return country.code === "US";
+    }) || null;
+    visitorByNumericId = countryData.reduce(function (acc, country) {
+      var numericId = ISO_NUMERIC_BY_ALPHA2[country.code];
+
+      if (numericId) {
+        acc[numericId] = country;
+      }
+
+      return acc;
+    }, {});
+    stateVisitorByFips = ((usVisitorData && usVisitorData.states) || []).reduce(function (acc, state) {
+      var fips = STATE_FIPS_BY_ALPHA2[state.code];
+
+      if (fips) {
+        acc[fips] = state;
+      }
+
+      return acc;
+    }, {});
   }
 
   function normalizeCountryId(value) {
@@ -757,9 +765,7 @@
     });
   }
 
-  function enrichCountries(world) {
-    countries = window.topojson.feature(world, world.objects.countries).features;
-
+  function applyVisitorDataToCountries() {
     countries.forEach(function (feature) {
       var visitor = visitorByNumericId[normalizeCountryId(feature.id)];
 
@@ -769,9 +775,7 @@
     });
   }
 
-  function enrichStates(us) {
-    states = window.topojson.feature(us, us.objects.states).features;
-
+  function applyVisitorDataToStates() {
     states.forEach(function (feature) {
       var visitor = stateVisitorByFips[normalizeStateId(feature.id)];
 
@@ -783,6 +787,34 @@
         feature.properties.name = visitor.name;
       }
     });
+  }
+
+  function applyVisitorDataToFeatures() {
+    applyVisitorDataToCountries();
+    applyVisitorDataToStates();
+  }
+
+  function enrichCountries(world) {
+    countries = window.topojson.feature(world, world.objects.countries).features;
+    applyVisitorDataToCountries();
+  }
+
+  function enrichStates(us) {
+    states = window.topojson.feature(us, us.objects.states).features;
+    applyVisitorDataToStates();
+  }
+
+  function updateAnalyticsData(nextData) {
+    rebuildVisitorIndexes(nextData);
+    applyVisitorDataToFeatures();
+
+    if (!globe) {
+      return;
+    }
+
+    globe.polygonsData(visiblePolygons());
+    refreshTheme();
+    setDetail(selectedFeature ? featureVisitor(selectedFeature) : null);
   }
 
   function initializeGlobe() {
@@ -853,6 +885,12 @@
     setStatus("Unable to load the globe libraries.", false);
     return;
   }
+
+  rebuildVisitorIndexes(data);
+
+  window.addEventListener("visitorAnalyticsUpdated", function (event) {
+    updateAnalyticsData(event.detail);
+  });
 
   Promise.all([
     fetch(WORLD_TOPOLOGY_URL).then(function (response) {
