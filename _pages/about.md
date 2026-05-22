@@ -26,3 +26,5 @@ Feel free to connect with me via email or my socials! To see a list of my public
 {% include news-list.html limit=5 compact=true %}
 
 <p class="news-more-link"><a href="{{ base_path }}/news/">See all news</a></p>
+
+{% include visitor-badge.html %}

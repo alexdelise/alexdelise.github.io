@@ -1,0 +1,12 @@
+{% include base_path %}
+{% assign visitor_total = 0 %}
+{% for country in site.data.visitors.countries %}
+  {% assign visitor_total = visitor_total | plus: country.visitors %}
+{% endfor %}
+
+<div class="visitor-badge-wrapper">
+  <a class="visitor-badge" href="{{ base_path }}/visitors/" aria-label="View visitor map and analytics">
+    <span class="visitor-badge__label">Visitors:</span>
+    <span class="visitor-badge__count">{{ visitor_total }}</span>
+  </a>
+</div>

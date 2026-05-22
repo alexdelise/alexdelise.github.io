@@ -1,0 +1,62 @@
+---
+permalink: /visitors/
+title: "Visitor Map"
+layout: splash
+author_profile: false
+sitemap: false
+---
+
+{% include base_path %}
+{% include visitor-data-script.html %}
+
+{% assign visitor_total = 0 %}
+{% for country in site.data.visitors.countries %}
+  {% assign visitor_total = visitor_total | plus: country.visitors %}
+{% endfor %}
+
+<section class="visitor-map-page" aria-labelledby="visitor-map-title">
+  <header class="visitor-map-page__header">
+    <p class="visitor-map-page__eyebrow">Site analytics</p>
+    <h1 id="visitor-map-title">Visitor Map</h1>
+    <p class="visitor-map-page__intro">
+      A minimal globe view of visitor locations, using a replaceable data layer in <code>_data/visitors.yml</code>.
+    </p>
+  </header>
+
+  <div class="visitor-map-stats" aria-label="Visitor summary">
+    <div class="visitor-map-stat">
+      <span class="visitor-map-stat__value" data-visitor-total>{{ visitor_total }}</span>
+      <span class="visitor-map-stat__label">Visitors</span>
+    </div>
+    <div class="visitor-map-stat">
+      <span class="visitor-map-stat__value">{{ site.data.visitors.countries | size }}</span>
+      <span class="visitor-map-stat__label">Countries</span>
+    </div>
+    <div class="visitor-map-stat">
+      <span class="visitor-map-stat__value">{{ site.data.visitors.updated | date: "%b %d, %Y" }}</span>
+      <span class="visitor-map-stat__label">Updated</span>
+    </div>
+  </div>
+
+  <div class="visitor-map-layout">
+    <div class="visitor-globe-panel" data-visitor-globe>
+      <canvas
+        id="visitor-globe"
+        class="visitor-globe"
+        tabindex="0"
+        aria-label="Interactive visitor globe. Drag to rotate, use the mouse wheel or plus and minus keys to zoom."
+      ></canvas>
+      <div id="visitor-globe-tooltip" class="visitor-globe-tooltip" role="status" aria-live="polite"></div>
+      <p class="visitor-globe-panel__hint">Drag to rotate. Scroll or use +/- to zoom.</p>
+    </div>
+
+    <aside class="visitor-detail-panel" aria-live="polite">
+      <h2>Location Details</h2>
+      <div id="visitor-country-detail" class="visitor-country-detail">
+        <p>Hover over a highlighted country to see visitor totals.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<script defer src="{{ base_path }}/assets/js/visitor-globe.js"></script>

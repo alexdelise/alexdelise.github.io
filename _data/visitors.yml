@@ -1,0 +1,55 @@
+updated: "2026-05-22"
+source: "mock"
+countries:
+  - code: "US"
+    name: "United States"
+    visitors: 96
+    states:
+      - code: "FL"
+        name: "Florida"
+        visitors: 34
+      - code: "TN"
+        name: "Tennessee"
+        visitors: 14
+      - code: "GA"
+        name: "Georgia"
+        visitors: 9
+      - code: "MD"
+        name: "Maryland"
+        visitors: 8
+      - code: "CA"
+        name: "California"
+        visitors: 7
+      - code: "NY"
+        name: "New York"
+        visitors: 6
+      - code: "TX"
+        name: "Texas"
+        visitors: 5
+      - code: "MA"
+        name: "Massachusetts"
+        visitors: 5
+      - code: "NC"
+        name: "North Carolina"
+        visitors: 4
+      - code: "WA"
+        name: "Washington"
+        visitors: 4
+  - code: "CA"
+    name: "Canada"
+    visitors: 12
+  - code: "GB"
+    name: "United Kingdom"
+    visitors: 8
+  - code: "IN"
+    name: "India"
+    visitors: 7
+  - code: "DE"
+    name: "Germany"
+    visitors: 5
+  - code: "AU"
+    name: "Australia"
+    visitors: 4
+  - code: "BR"
+    name: "Brazil"
+    visitors: 3
