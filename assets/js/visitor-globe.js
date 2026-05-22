@@ -11,6 +11,9 @@
   }
 
   var WORLD_TOPOLOGY_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json";
+  var US_TOPOLOGY_URL = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
+  var US_STATE_ZOOM_ALTITUDE = 1.65;
+  var NORTH_AMERICA_VIEW = { lat: 42, lng: -98, altitude: 2.05 };
   var ISO_NUMERIC_BY_ALPHA2 = {
     AD: "020",
     AE: "784",
@@ -262,9 +265,65 @@
     ZM: "894",
     ZW: "716"
   };
+  var STATE_FIPS_BY_ALPHA2 = {
+    AL: "01",
+    AK: "02",
+    AZ: "04",
+    AR: "05",
+    CA: "06",
+    CO: "08",
+    CT: "09",
+    DE: "10",
+    DC: "11",
+    FL: "12",
+    GA: "13",
+    HI: "15",
+    ID: "16",
+    IL: "17",
+    IN: "18",
+    IA: "19",
+    KS: "20",
+    KY: "21",
+    LA: "22",
+    ME: "23",
+    MD: "24",
+    MA: "25",
+    MI: "26",
+    MN: "27",
+    MS: "28",
+    MO: "29",
+    MT: "30",
+    NE: "31",
+    NV: "32",
+    NH: "33",
+    NJ: "34",
+    NM: "35",
+    NY: "36",
+    NC: "37",
+    ND: "38",
+    OH: "39",
+    OK: "40",
+    OR: "41",
+    PA: "42",
+    RI: "44",
+    SC: "45",
+    SD: "46",
+    TN: "47",
+    TX: "48",
+    UT: "49",
+    VT: "50",
+    VA: "51",
+    WA: "53",
+    WV: "54",
+    WI: "55",
+    WY: "56"
+  };
 
   var data = window.visitorAnalyticsData || { countries: [] };
   var countryData = (data.countries || []).slice();
+  var usVisitorData = countryData.find(function (country) {
+    return country.code === "US";
+  });
   var visitorByNumericId = countryData.reduce(function (acc, country) {
     var numericId = ISO_NUMERIC_BY_ALPHA2[country.code];
 
@@ -274,9 +333,21 @@
 
     return acc;
   }, {});
+  var stateVisitorByFips = ((usVisitorData && usVisitorData.states) || []).reduce(function (acc, state) {
+    var fips = STATE_FIPS_BY_ALPHA2[state.code];
+
+    if (fips) {
+      acc[fips] = state;
+    }
+
+    return acc;
+  }, {});
   var colors = {};
   var globe = null;
   var countries = [];
+  var states = [];
+  var showStateBreakdown = false;
+  var zoomUpdateFrame = null;
   var hoveredFeature = null;
   var selectedFeature = null;
 
@@ -310,8 +381,20 @@
     return String(value).padStart(3, "0");
   }
 
+  function normalizeStateId(value) {
+    if (value === null || value === undefined) {
+      return "";
+    }
+
+    return String(value).padStart(2, "0");
+  }
+
   function featureVisitor(feature) {
     return feature && feature.properties ? feature.properties.visitorData : null;
+  }
+
+  function featureKind(feature) {
+    return feature && feature.properties ? feature.properties.kind : null;
   }
 
   function escapeHtml(value) {
@@ -354,7 +437,7 @@
 
   function setDetail(country) {
     if (!country) {
-      detail.innerHTML = "<p>Hover over a highlighted country to see visitor totals. Click a country to keep it selected.</p>";
+      detail.innerHTML = "<p>Hover over a highlighted country or state to see visitor totals. Zoom into the United States for the state breakdown.</p>";
       return;
     }
 
@@ -362,7 +445,13 @@
   }
 
   function polygonCapColor(feature) {
-    return featureVisitor(feature) ? colors.highlight : colors.land;
+    var visitor = featureVisitor(feature);
+
+    if (featureKind(feature) === "state") {
+      return visitor ? colors.highlight : colors.land;
+    }
+
+    return visitor ? colors.highlight : colors.land;
   }
 
   function polygonSideColor(feature) {
@@ -378,11 +467,17 @@
   }
 
   function polygonAltitude(feature) {
+    var visitor = featureVisitor(feature);
+
     if (feature === hoveredFeature || feature === selectedFeature) {
       return 0.018;
     }
 
-    return featureVisitor(feature) ? 0.012 : 0.004;
+    if (featureKind(feature) === "state") {
+      return visitor ? 0.014 : 0.005;
+    }
+
+    return visitor ? 0.012 : 0.004;
   }
 
   function polygonLabel(feature) {
@@ -399,6 +494,16 @@
       globe.width(Math.max(320, Math.round(rect.width)));
       globe.height(Math.max(420, Math.round(height)));
     }
+  }
+
+  function visiblePolygons() {
+    if (!showStateBreakdown || !states.length) {
+      return countries;
+    }
+
+    return countries.filter(function (feature) {
+      return normalizeCountryId(feature.id) !== ISO_NUMERIC_BY_ALPHA2.US;
+    }).concat(states);
   }
 
   function refreshTheme() {
@@ -426,6 +531,41 @@
       .polygonSideColor(polygonSideColor)
       .polygonStrokeColor(polygonStrokeColor)
       .polygonAltitude(polygonAltitude);
+  }
+
+  function syncStateBreakdown(force) {
+    var point;
+    var shouldShowStates;
+
+    if (!globe || !states.length) {
+      return;
+    }
+
+    point = globe.pointOfView();
+    shouldShowStates = (point.altitude || NORTH_AMERICA_VIEW.altitude) <= US_STATE_ZOOM_ALTITUDE;
+
+    if (!force && shouldShowStates === showStateBreakdown) {
+      return;
+    }
+
+    showStateBreakdown = shouldShowStates;
+    hoveredFeature = null;
+    selectedFeature = null;
+    globeEl.classList.remove("is-hovering");
+    setDetail(null);
+    globe.polygonsData(visiblePolygons());
+    refreshTheme();
+  }
+
+  function scheduleStateBreakdownSync() {
+    if (zoomUpdateFrame) {
+      return;
+    }
+
+    zoomUpdateFrame = window.requestAnimationFrame(function () {
+      zoomUpdateFrame = null;
+      syncStateBreakdown(false);
+    });
   }
 
   function movePointOfView(deltaLng, deltaLat, deltaAltitude) {
@@ -458,7 +598,10 @@
       } else if (event.key === "-" || event.key === "_") {
         movePointOfView(0, 0, 0.25);
       } else if (event.key === "Home") {
-        globe.pointOfView({ lat: 20, lng: -35, altitude: 2.25 }, 350);
+        globe.pointOfView(NORTH_AMERICA_VIEW, 350);
+        window.setTimeout(function () {
+          syncStateBreakdown(false);
+        }, 360);
       } else {
         handled = false;
       }
@@ -476,7 +619,24 @@
       var visitor = visitorByNumericId[normalizeCountryId(feature.id)];
 
       feature.properties = feature.properties || {};
+      feature.properties.kind = "country";
       feature.properties.visitorData = visitor || null;
+    });
+  }
+
+  function enrichStates(us) {
+    states = window.topojson.feature(us, us.objects.states).features;
+
+    states.forEach(function (feature) {
+      var visitor = stateVisitorByFips[normalizeStateId(feature.id)];
+
+      feature.properties = feature.properties || {};
+      feature.properties.kind = "state";
+      feature.properties.visitorData = visitor || null;
+
+      if (visitor) {
+        feature.properties.name = visitor.name;
+      }
     });
   }
 
@@ -530,10 +690,12 @@
     controls.zoomSpeed = 0.7;
     controls.minDistance = 170;
     controls.maxDistance = 520;
+    controls.addEventListener("change", scheduleStateBreakdownSync);
 
     refreshTheme();
     resizeGlobe();
-    globe.pointOfView({ lat: 20, lng: -35, altitude: 2.25 }, 0);
+    globe.pointOfView(NORTH_AMERICA_VIEW, 0);
+    syncStateBreakdown(true);
     wireKeyboardControls();
     setDetail(null);
     setStatus("", true);
@@ -544,20 +706,29 @@
     return;
   }
 
-  fetch(WORLD_TOPOLOGY_URL)
-    .then(function (response) {
+  Promise.all([
+    fetch(WORLD_TOPOLOGY_URL).then(function (response) {
       if (!response.ok) {
         throw new Error("World topology request failed.");
       }
 
       return response.json();
+    }),
+    fetch(US_TOPOLOGY_URL).then(function (response) {
+      if (!response.ok) {
+        throw new Error("US topology request failed.");
+      }
+
+      return response.json();
     })
-    .then(function (world) {
-      enrichCountries(world);
+  ])
+    .then(function (topologies) {
+      enrichCountries(topologies[0]);
+      enrichStates(topologies[1]);
       initializeGlobe();
     })
     .catch(function () {
-      setStatus("Unable to load the country geometry.", false);
+      setStatus("Unable to load the map geometry.", false);
     });
 
   if ("ResizeObserver" in window) {
