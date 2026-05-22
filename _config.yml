@@ -158,7 +158,7 @@ analytics:
     tracking_id          :
 
 visitor_analytics:
-  api_url                : "https://alexdelise.workers.dev" # Set to the deployed Cloudflare Worker URL, e.g. https://visitor-analytics.example.workers.dev
+  api_url                : "https://visitor-analytics.alexdelise.workers.dev" # Set to the deployed Cloudflare Worker URL, e.g. https://visitor-analytics.example.workers.dev
   track                  : true
   refresh_interval_ms    : 30000
 
