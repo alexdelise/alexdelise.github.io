@@ -4,7 +4,7 @@ collection: publications
 category: research
 permalink: /publication/epidemiological-minlp-vaccine-modeling-and-patient-allocation-during-pandemics/
 excerpt: "A SIRV-integrated mixed-integer nonlinear optimization model for vaccine modeling and patient allocation during pandemic response."
-date: 2024-06-01
+date: 2025-06-01
 venue: "10th North American International Conference on Industrial Engineering and Operations Management"
 status: "Proceedings"
 authors: "Alexander DeLise, Seyedreza Abazari, and Arda Vanli"
