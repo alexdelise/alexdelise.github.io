@@ -1,26 +1,8 @@
 - date: 2026-03-27
-  display_date: "March 2026"
-  title: "Named a 2026 Goldwater Scholar"
-  text: "I earned the Barry Goldwater Scholarship, a national award recognizing undergraduate researchers in STEM."
-  url: "https://news.fsu.edu/news/students-campus-life/2026/04/13/fsu-achieves-historic-milestone-four-students-named-2026-goldwater-scholars/"
-  source: "Florida State University News"
-  image:
-  image_alt:
+  text: "I was named a [2026 Goldwater Scholar](https://news.fsu.edu/news/students-campus-life/2026/04/13/fsu-achieves-historic-milestone-four-students-named-2026-goldwater-scholars/), a national award recognizing undergraduate researchers in STEM."
 
 - date: 2026-04-10
-  display_date: "April 2026"
-  title: "Manuscript Accepted to Foundations of Data Science"
-  text: "Our manuscript, *Optimal Linear Baseline Models for Scientific Machine Learning*, was accepted for publication to Foundations of Data Science."
-  url: "https://www.aimsciences.org/article/doi/10.3934/fods.2026012"
-  source: "Foundations of Data Science"
-  image:
-  image_alt:
+  text: "Our manuscript, [*Optimal Linear Baseline Models for Scientific Machine Learning*](https://www.aimsciences.org/article/doi/10.3934/fods.2026012), was accepted for publication in *Foundations of Data Science*."
 
 - date: 2026-05-06
-  display_date: "May 2026"
-  title: "New manuscript on arXiv"
-  text: "Our manuscript, *Active Learning for Conditional Generative Compressed Sensing*, is now available on arXiv."
-  url: "https://arxiv.org/abs/2605.05435"
-  source: "arXiv"
-  image:
-  image_alt:
+  text: "Our manuscript, [*Active Learning for Conditional Generative Compressed Sensing*](https://arxiv.org/abs/2605.05435), is now available on arXiv."
