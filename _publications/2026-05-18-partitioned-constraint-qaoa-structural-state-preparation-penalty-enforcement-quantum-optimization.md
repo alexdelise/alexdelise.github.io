@@ -21,7 +21,6 @@ demourl:
 posterurl:
 slidesurl:
 bibtexurl:
-citation: 'Anthony Wilkie, Alexander DeLise, Andrew Del Real, Rebekah Herrman, and James Ostrowski. (2026). &quot;Partitioned-Constraint QAOA (PC-QAOA): Structural State Preparation and Penalty Enforcement for Quantum Optimization.&quot; <i>arXiv:2508.02590v2</i>.'
 ---
 
 ## Abstract
