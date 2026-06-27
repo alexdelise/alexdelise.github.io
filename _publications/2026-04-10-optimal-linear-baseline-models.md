@@ -7,6 +7,7 @@ excerpt: "Optimal rank-constrained linear encoder-decoder models for principled 
 date: 2026-04-10
 venue: "Foundations of Data Science"
 status: "Accepted"
+authors: "Alexander DeLise, Kyle Loh, Krish Patel, Meredith Teague, Andrea Arnold, and Matthias Chung"
 image: "/images/publications/optimal-linear-baseline-models.svg"
 image_alt: "Encoder-decoder diagram for optimal linear baseline models"
 paperurl: "https://www.aimsciences.org/article/doi/10.3934/fods.2026012"
