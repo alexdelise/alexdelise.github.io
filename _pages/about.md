@@ -23,7 +23,7 @@ I will be applying to PhD programs in the upcoming cycle, and I am always happy 
 
 ## News
 
-{% include news-list.html limit=5 %}
+{% include news-list.html limit=3 %}
 
 <p class="news-more-link"><a href="{{ base_path }}/news/">See all news</a></p>
 
