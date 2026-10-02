@@ -158,8 +158,8 @@
       return Promise.resolve();
     }
     if (!hasLiveData) {
-      document.querySelectorAll(displayTargets).forEach(function (node) { node.textContent = "Loading…"; });
-      setStatus("Loading analytics…", false);
+      document.querySelectorAll(displayTargets).forEach(function (node) { node.textContent = "Loadingâ€¦"; });
+      setStatus("Loading analyticsâ€¦", false);
     }
     pending = requestJson("/stats").then(function (data) {
       updateDisplay(data);
