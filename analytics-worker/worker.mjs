@@ -96,7 +96,8 @@ function publicStats(stats) {
       const output = {
         code: country.code,
         name: country.name,
-        visitors: country.visitors || 0
+        visitors: country.visitors || 0,
+        lastVisited: country.lastVisited || null
       };
 
       if (country.states) {
@@ -130,6 +131,7 @@ function incrementStats(stats, location) {
 
   country.name = location.name;
   country.visitors += 1;
+  country.lastVisited = new Date().toISOString();
 
   if (location.code === "US" && location.stateCode) {
     country.states = country.states || {};

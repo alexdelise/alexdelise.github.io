@@ -1,5 +1,5 @@
 <script>
-  window.visitorAnalyticsData = {{ site.data.visitors | jsonify }};
+  window.visitorAnalyticsData = null;
   window.visitorAnalyticsConfig = {
     apiUrl: {{ site.visitor_analytics.api_url | default: "" | jsonify }},
     track: {{ site.visitor_analytics.track | jsonify }},

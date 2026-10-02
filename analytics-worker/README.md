@@ -7,7 +7,7 @@ It exposes:
 - `POST /track`: increments the current visitor session using Cloudflare geolocation headers.
 - `GET /stats`: returns aggregate visitor counts in the same shape as `_data/visitors.yml`.
 
-The Worker stores only aggregate country/state counts. It does not store IP addresses, user agents, paths, or referrers.
+The Worker stores aggregate country/state counts and the latest visit timestamp per country. It does not store IP addresses, user agents, paths, or referrers.
 
 ## Deploy
 
@@ -35,3 +35,5 @@ The Worker stores only aggregate country/state counts. It does not store IP addr
    ```
 
 After the site is rebuilt, each browser session will increment the counter once and the badge/map will poll for fresh counts.
+
+Recent visitor countries use `lastVisited` timestamps. Existing stored counts remain compatible; countries without timestamps appear in the recent list only after a new visit. Deploy the updated Worker alongside the frontend to enable this feature.

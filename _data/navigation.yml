@@ -11,6 +11,9 @@ main:
   - title: "Research"
     url: /publications/
 
+  - title: "Blog"
+    url: /blog/
+
   - title: "News"
     url: /news/
 

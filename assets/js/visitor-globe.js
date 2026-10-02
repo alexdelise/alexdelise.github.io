@@ -892,6 +892,18 @@
     updateAnalyticsData(event.detail);
   });
 
+  window.addEventListener("visitorCountrySelected", function (event) {
+    var feature = countries.find(function (item) {
+      var visitor = featureVisitor(item);
+      return visitor && visitor.code === event.detail;
+    });
+    if (feature && globe) {
+      selectedFeature = feature;
+      setDetail(featureVisitor(feature));
+      focusFeature(feature, featureVisitor(feature));
+    }
+  });
+
   Promise.all([
     fetch(WORLD_TOPOLOGY_URL).then(function (response) {
       if (!response.ok) {
