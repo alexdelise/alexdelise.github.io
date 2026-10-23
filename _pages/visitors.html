@@ -51,9 +51,11 @@ sitemap: false
 
     <aside class="visitor-detail-panel" aria-live="polite">
       <h2>Location Details</h2>
-      <h3>Recent visitor countries</h3>
-      <div data-visitor-recent><p>Loading…</p></div>
-      <div id="visitor-country-detail" class="visitor-country-detail">
+      <div data-visitor-country-summary>
+        <h3>Top visitor countries</h3>
+        <div data-visitor-recent><p>Loading…</p></div>
+      </div>
+      <div id="visitor-country-detail" class="visitor-country-detail" hidden>
         <p>Hover over a highlighted country to see visitor totals.</p>
       </div>
     </aside>

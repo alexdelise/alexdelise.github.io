@@ -7,6 +7,7 @@ excerpt: "Prompt-conditioned Christoffel sampling for image recovery from subsam
 date: 2026-05-06
 venue: "arXiv"
 status: "Preprint"
+featured: true
 authors: "Alexander DeLise and Nick Dexter"
 image: "/images/publications/active-learning-conditional-gcs.png"
 image_alt: "Stable Diffusion sampling distribution for a cat prompt"
@@ -19,6 +20,10 @@ demourl:
 posterurl:
 slidesurl:
 bibtexurl:
+links:
+  - label: "NeurIPS"
+    first: true
+    url: "https://neurips.cc/virtual/2026/loc/atlanta/poster/149778"
 citation:
 ---
 

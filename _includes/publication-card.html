@@ -26,7 +26,7 @@
     {% endif %}
 
     <p class="publication-card__venue">
-      {% if publication.status %}{{ publication.status }}{% if publication.venue %}, {% endif %}{% endif %}{% if publication.venue %}<i>{{ publication.venue }}</i>{% endif %}{% if publication.date %}, {{ publication.date | date: "%Y" }}{% endif %}
+      {% if publication.status %}{{ publication.status }}{% if publication.venue %}, {% endif %}{% endif %}{% if publication.venue %}<i>{{ publication.venue }}</i>{% endif %}{% if publication.publication_year %}, {{ publication.publication_year }}{% elsif publication.date %}, {{ publication.date | date: "%Y" }}{% endif %}
     </p>
 
     {% if publication.excerpt %}

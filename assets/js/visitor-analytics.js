@@ -4,6 +4,8 @@
   var config = window.visitorAnalyticsConfig || {};
   var hasLiveData = false;
   var pending = null;
+  var retryTimer = null;
+  var failures = 0;
   var apiUrl = String(config.apiUrl || "").replace(/\/+$/, "");
   var refreshIntervalMs = Number(config.refreshIntervalMs || 30000);
   var displayTargets = "[data-visitor-count], [data-visitor-total], [data-visitor-country-count], [data-visitor-updated]";
@@ -41,10 +43,20 @@
   }
 
   function updateDisplay(data) {
+    if (!data || !Array.isArray(data.countries) || data.countries.some(function (country) {
+      return !country || typeof country.name !== "string" || !Number.isFinite(Number(country.visitors)) || Number(country.visitors) < 0;
+    })) {
+      throw new Error("Invalid visitor analytics response.");
+    }
+    if (hasLiveData && Date.parse(data.updated) < Date.parse(window.visitorAnalyticsData.updated)) {
+      return;
+    }
     var total = visitorTotal(data);
     var countries = (data.countries || []).length;
 
     hasLiveData = true;
+    failures = 0;
+    window.clearTimeout(retryTimer);
     setStatus("", false);
     window.visitorAnalyticsData = data;
     renderRecent(data);
@@ -122,14 +134,14 @@
 
   function renderRecent(data) {
     var recent = (data.countries || []).filter(function (country) {
-      return country.code !== "XX" && country.lastVisited && Number.isFinite(Date.parse(country.lastVisited));
+      return country.code !== "XX" && Number(country.visitors) > 0;
     }).sort(function (a, b) {
-      return Date.parse(b.lastVisited) - Date.parse(a.lastVisited) || a.name.localeCompare(b.name);
-    }).slice(0, 3);
+      return Number(b.visitors) - Number(a.visitors) || a.name.localeCompare(b.name);
+    }).slice(0, 5);
     document.querySelectorAll("[data-visitor-recent]").forEach(function (node) {
       node.textContent = "";
       if (!recent.length) {
-        node.textContent = "Recent countries will appear as new visits are recorded.";
+        node.textContent = "No country visits recorded yet.";
         return;
       }
       var list = document.createElement("ul");
@@ -143,7 +155,7 @@
         });
         item.appendChild(button);
         var time = document.createElement("small");
-        time.textContent = formatDate(country.lastVisited);
+        time.textContent = Number(country.visitors).toLocaleString() + (Number(country.visitors) === 1 ? " visit" : " visits");
         item.appendChild(time);
         list.appendChild(item);
       });
@@ -153,6 +165,7 @@
 
   function fetchStats() {
     if (pending) { return pending; }
+    window.clearTimeout(retryTimer);
     if (!apiUrl) {
       setStatus("Analytics unavailable: service is not configured.", true);
       return Promise.resolve();
@@ -166,6 +179,10 @@
       return data;
     }).catch(function () {
       setStatus(hasLiveData ? "Unable to refresh. Showing the last successful update." : "Analytics unavailable. Please retry.", true);
+      failures += 1;
+      if (failures <= 3) {
+        retryTimer = window.setTimeout(fetchStats, Math.min(1000 * Math.pow(2, failures - 1), 4000));
+      }
     }).finally(function () { pending = null; });
     return pending;
   }
@@ -202,6 +219,10 @@
   });
   fetchStats();
   trackVisit();
+  window.addEventListener("online", fetchStats);
+  document.addEventListener("visibilitychange", function () {
+    if (!document.hidden) { fetchStats(); }
+  });
 
   if (apiUrl && refreshIntervalMs > 0 && document.querySelector(displayTargets)) {
     window.setInterval(fetchStats, refreshIntervalMs);

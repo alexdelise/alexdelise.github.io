@@ -445,8 +445,13 @@
   }
 
   function setDetail(country) {
+    var summary = document.querySelector("[data-visitor-country-summary]");
+    if (summary) { summary.hidden = showStateBreakdown; }
+    detail.hidden = !showStateBreakdown;
+    if (!showStateBreakdown) { return; }
+    country = country || usVisitorData;
     if (!country) {
-      detail.innerHTML = "<p>Hover over a highlighted country or state to see visitor totals. Zoom into the United States for the state breakdown.</p>";
+      detail.innerHTML = "<p>No US state visits available. Hover over a highlighted state to explore its visits.</p>";
       return;
     }
 
@@ -695,7 +700,9 @@
     }
 
     point = globe.pointOfView();
-    shouldShowStates = (point.altitude || NORTH_AMERICA_VIEW.altitude) <= US_STATE_ZOOM_ALTITUDE;
+    var longitude = ((point.lng + 540) % 360) - 180;
+    shouldShowStates = (point.altitude || NORTH_AMERICA_VIEW.altitude) <= US_STATE_ZOOM_ALTITUDE &&
+      point.lat >= 15 && point.lat <= 75 && longitude >= -175 && longitude <= -50;
 
     if (!force && shouldShowStates === showStateBreakdown) {
       return;
@@ -807,6 +814,7 @@
   function updateAnalyticsData(nextData) {
     rebuildVisitorIndexes(nextData);
     applyVisitorDataToFeatures();
+    setDetail(selectedFeature ? featureVisitor(selectedFeature) : null);
 
     if (!globe) {
       return;

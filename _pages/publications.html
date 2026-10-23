@@ -12,20 +12,25 @@ author_profile: true
 {% include base_path %}
 
 {% assign publications = site.publications | sort: "date" | reverse %}
-{% assign current_year = "" %}
+{% assign featured_publications = publications | where: "featured", true %}
+{% assign other_publications = publications | where_exp: "publication", "publication.featured != true" %}
+{% assign publications = featured_publications | concat: other_publications %}
+{% capture publication_years %}{% for publication in publications %}{% unless publication.hidden %}{% if publication.publication_year %}{{ publication.publication_year }}{% else %}{{ publication.date | date: "%Y" }}{% endif %},{% endunless %}{% endfor %}{% endcapture %}
+{% assign publication_years = publication_years | split: "," | uniq | sort | reverse %}
 
 <div class="publication-list">
-  {% for publication in publications %}
+  {% for year in publication_years %}
+    <h2 class="publication-year">{{ year }}</h2>
+    {% for publication in publications %}
     {% if publication.hidden == true %}
       {% continue %}
     {% endif %}
 
     {% assign publication_year = publication.date | date: "%Y" %}
-    {% if publication_year != current_year %}
-      <h2 class="publication-year">{{ publication_year }}</h2>
-      {% assign current_year = publication_year %}
-    {% endif %}
+    {% assign publication_year = publication.publication_year | default: publication_year | append: "" %}
+    {% unless publication_year == year %}{% continue %}{% endunless %}
 
     {% include publication-card.html publication=publication %}
+    {% endfor %}
   {% endfor %}
 </div>

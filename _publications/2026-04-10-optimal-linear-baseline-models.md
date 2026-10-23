@@ -5,8 +5,9 @@ category: manuscripts
 permalink: /publication/optimal-linear-baseline-models-for-scientific-machine-learning/
 excerpt: "Optimal rank-constrained linear encoder-decoder models for principled scientific machine learning baselines."
 date: 2026-04-10
+publication_year: "2027"
 venue: "Foundations of Data Science"
-status: "Accepted"
+status: "Forthcoming"
 authors: "Alexander DeLise, Kyle Loh, Krish Patel, Meredith Teague, Andrea Arnold, and Matthias Chung"
 image: "/images/publications/optimal-linear-baseline-models.svg"
 image_alt: "Encoder-decoder diagram for optimal linear baseline models"
