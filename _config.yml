@@ -24,7 +24,7 @@ repository               : "academicpages/academicpages.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "profile.jpg"
+  avatar           : "headshot_landscape_cropped.jpg"
   name             : "Alex DeLise"
   pronouns         : # example: "she/her"  
   bio              : "applied math & scientific computing @ fsu | prev ml @ emory, quantum computing @ ut knoxville"
